@@ -1,11 +1,14 @@
 package com.jarsolutions.fitness.user.domain.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table(name = "user_account")
@@ -23,6 +26,9 @@ public class User {
   @Column(nullable = false, unique = true)
   private String email;
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<UserSession> userSession;
+
   public User(String username, String password, String email) {
     this.username = username;
     this.password = password;
@@ -39,6 +45,11 @@ public class User {
   @Override
   public int hashCode() {
     return getClass().hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return "User [id: " + id + "; username: " + username + "; email: " + email + ";]";
   }
 
   public Long getId() {
@@ -71,5 +82,13 @@ public class User {
 
   public void setEmail(String email) {
     this.email = email;
+  }
+
+  public List<User> getUserSession() {
+    return userSession;
+  }
+
+  public void setUserSession(List<User> userSession) {
+    this.userSession = userSession;
   }
 }
