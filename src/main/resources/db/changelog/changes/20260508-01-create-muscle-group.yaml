@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-muscle-group
+      author: juan
+      changes:
+        - createTable:
+            tableName: muscle_group
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+  - changeSet:
+      id: 002-add-muscle-group-to-muscle
+      author: juan
+      changes:
+        - addColumn:
+            tableName: muscle
+            columns:
+              - column:
+                  name: muscle_group_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: muscle
+            baseColumnNames: muscle_group_id
+            referencedTableName: muscle_group
+            referencedColumnNames: id
+            constraintName: fk_muscle_muscle_group_id
+            onDelete: CASCADE
