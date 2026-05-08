@@ -84,11 +84,11 @@ public class User {
     this.email = email;
   }
 
-  public List<User> getUserSession() {
+  public List<UserSession> getUserSession() {
     return userSession;
   }
 
-  public void setUserSession(List<User> userSession) {
+  public void setUserSession(List<UserSession> userSession) {
     this.userSession = userSession;
   }
 }
