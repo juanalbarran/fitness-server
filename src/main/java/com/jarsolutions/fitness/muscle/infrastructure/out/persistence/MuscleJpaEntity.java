@@ -1,11 +1,15 @@
 package com.jarsolutions.fitness.muscle.infrastructure.out.persistence;
 
 import com.jarsolutions.fitness.common.infrastructure.persistence.BaseJpaEntity;
+import com.jarsolutions.fitness.musclegroup.infrastructure.out.persistence.MuscleGroupJpaEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,6 +21,10 @@ public class MuscleJpaEntity extends BaseJpaEntity<Long> {
 
   @Column(unique = true, nullable = false)
   private String name;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "muscle_group_id", nullable = false)
+  private MuscleGroupJpaEntity muscleGroup;
 
   protected MuscleJpaEntity() {}
 

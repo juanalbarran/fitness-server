@@ -14,4 +14,8 @@ public interface MuscleGroupRepository {
   List<MuscleGroup> findAll();
 
   void delete(Long id);
+
+  boolean existsById(Long id);
+
+  boolean existsByName(String name);
 }

@@ -47,4 +47,14 @@ public class MuscleGroupPersistenceAdapter implements MuscleGroupRepository {
   public void delete(Long id) {
     jpaRepository.deleteById(id);
   }
+
+  @Override
+  public boolean existsById(Long id) {
+    return jpaRepository.existsById(id);
+  }
+
+  @Override
+  public boolean existsByName(String name) {
+    return jpaRepository.existsByName(name);
+  }
 }

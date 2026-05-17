@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface MuscleGroupUseCases {
   MuscleGroup createMuscleGroup(CreateMuscleGroupCommand command);
 
-  MuscleGroup updateMuscleGroup(UpdateMuscleGroupCommand command);
+  MuscleGroup updateMuscleGroup(Long id, UpdateMuscleGroupCommand command);
 
   Optional<MuscleGroup> getMuscleGroup(Long id);
 

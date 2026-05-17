@@ -1,4 +1,4 @@
-package com.jarsolutions.fitness.muscle.domain;
+package com.jarsolutions.fitness.muscle.domain.model;
 
 public class Muscle {
   private Long id;

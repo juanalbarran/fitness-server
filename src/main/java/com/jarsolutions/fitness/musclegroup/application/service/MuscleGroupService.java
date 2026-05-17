@@ -3,6 +3,7 @@ package com.jarsolutions.fitness.musclegroup.application.service;
 import com.jarsolutions.fitness.musclegroup.application.command.CreateMuscleGroupCommand;
 import com.jarsolutions.fitness.musclegroup.application.command.UpdateMuscleGroupCommand;
 import com.jarsolutions.fitness.musclegroup.application.port.in.MuscleGroupUseCases;
+import com.jarsolutions.fitness.musclegroup.domain.exception.*;
 import com.jarsolutions.fitness.musclegroup.domain.model.MuscleGroup;
 import com.jarsolutions.fitness.musclegroup.domain.port.MuscleGroupRepository;
 import jakarta.transaction.Transactional;
@@ -11,7 +12,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
-@Transactional
 public class MuscleGroupService implements MuscleGroupUseCases {
 
   private final MuscleGroupRepository repository;
@@ -21,20 +21,32 @@ public class MuscleGroupService implements MuscleGroupUseCases {
   }
 
   @Override
+  @Transactional
   public MuscleGroup createMuscleGroup(CreateMuscleGroupCommand command) {
-    return repository.save(new MuscleGroup(command.name()));
+    String name = command.name();
+    boolean exists = repository.existsByName(name);
+    if (exists)
+      throw new MuscleGroupAlreadyExistsException("A muscle group already exists with that name.");
+    return repository.save(new MuscleGroup(name));
   }
 
   @Override
-  public MuscleGroup updateMuscleGroup(UpdateMuscleGroupCommand command) {
-    MuscleGroup existing =
+  @Transactional
+  public MuscleGroup updateMuscleGroup(Long id, UpdateMuscleGroupCommand command) {
+    String name = command.name();
+    MuscleGroup muscleGroup =
         repository
-            .findById(command.id())
+            .findById(id)
             .orElseThrow(
                 () ->
-                    new IllegalArgumentException("A muscle group with that name does not exists."));
-    existing.setName(command.name());
-    return repository.save(existing);
+                    new MuscleGroupDoesNotExistException(
+                        "A muscle group with that id does not exist."));
+    if (name.equals(muscleGroup.getName())) return muscleGroup;
+    boolean exist = repository.existsByName(name);
+    if (exist)
+      throw new MuscleGroupAlreadyExistsException("A muscle group with that name already exists.");
+    muscleGroup.setName(name);
+    return repository.save(muscleGroup);
   }
 
   @Override
@@ -53,7 +65,12 @@ public class MuscleGroupService implements MuscleGroupUseCases {
   }
 
   @Override
+  @Transactional
   public void deleteMuscleGroup(Long id) {
+    boolean exist = repository.existsById(id);
+    if (!exist)
+      throw new MuscleGroupDoesNotExistException(
+          "A muscle group with the id: " + id + " does not exist.");
     repository.delete(id);
   }
 }

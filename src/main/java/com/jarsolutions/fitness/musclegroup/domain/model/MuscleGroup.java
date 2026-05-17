@@ -1,16 +1,22 @@
 package com.jarsolutions.fitness.musclegroup.domain.model;
 
+import com.jarsolutions.fitness.muscle.domain.model.Muscle;
+import java.util.List;
+
 public class MuscleGroup {
   private Long id;
   private String name;
+  private List<Muscle> muscles;
 
   public MuscleGroup(String name) {
     this.name = name;
+    this.muscles = List.of();
   }
 
-  public MuscleGroup(Long id, String name) {
+  public MuscleGroup(Long id, String name, List<Muscle> muscles) {
     this.id = id;
     this.name = name;
+    this.muscles = muscles;
   }
 
   public Long getId() {
@@ -19,6 +25,14 @@ public class MuscleGroup {
 
   public String getName() {
     return name;
+  }
+
+  public List<Muscle> getMuscles() {
+    return muscles;
+  }
+
+  public void setMuscles(List<Muscle> muscles) {
+    this.muscles = muscles;
   }
 
   public void setName(String name) {
