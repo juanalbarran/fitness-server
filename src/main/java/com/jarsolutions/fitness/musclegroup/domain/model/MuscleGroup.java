@@ -9,6 +9,7 @@ public class MuscleGroup {
   private List<Muscle> muscles;
 
   public MuscleGroup(String name) {
+    validateName(name);
     this.name = name;
     this.muscles = List.of();
   }
@@ -31,14 +32,14 @@ public class MuscleGroup {
     return muscles;
   }
 
-  public void setMuscles(List<Muscle> muscles) {
-    this.muscles = muscles;
-  }
-
-  public void setName(String name) {
+  private void validateName(String name) {
     if (name == null || name.trim().isEmpty()) {
       throw new IllegalArgumentException("Muscle group name cannot be null or empty");
     }
+  }
+
+  public void rename(String name) {
+    validateName(name);
     this.name = name;
   }
 }
