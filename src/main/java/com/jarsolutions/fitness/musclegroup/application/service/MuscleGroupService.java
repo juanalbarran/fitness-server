@@ -45,7 +45,7 @@ public class MuscleGroupService implements MuscleGroupUseCases {
     boolean exist = repository.existsByName(name);
     if (exist)
       throw new MuscleGroupAlreadyExistsException("A muscle group with that name already exists.");
-    muscleGroup.setName(name);
+    muscleGroup.rename(name);
     return repository.save(muscleGroup);
   }
 
