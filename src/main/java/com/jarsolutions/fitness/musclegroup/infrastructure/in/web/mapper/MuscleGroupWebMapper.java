@@ -22,13 +22,9 @@ public class MuscleGroupWebMapper {
 
   public MuscleGroupResponse toMuscleGroupResponse(MuscleGroup domain) {
     List<MuscleGroupResponse.MuscleResponse> muscles =
-        domain.getMuscles() != null
-            ? domain.getMuscles().stream()
-                .map(
-                    muscle ->
-                        new MuscleGroupResponse.MuscleResponse(muscle.getId(), muscle.getName()))
-                .toList()
-            : List.of();
+        domain.getMuscles().stream()
+            .map(muscle -> new MuscleGroupResponse.MuscleResponse(muscle.getId(), muscle.getName()))
+            .toList();
     return new MuscleGroupResponse(domain.getId(), domain.getName(), muscles);
   }
 }

@@ -4,7 +4,7 @@ import com.jarsolutions.fitness.musclegroup.domain.model.MuscleGroup;
 import java.util.List;
 import java.util.Optional;
 
-public interface MuscleGroupRepository {
+public interface MuscleGroupRepositoryPort {
   MuscleGroup save(MuscleGroup muscleGroup);
 
   Optional<MuscleGroup> findById(Long id);
@@ -14,8 +14,4 @@ public interface MuscleGroupRepository {
   List<MuscleGroup> findAll();
 
   void delete(Long id);
-
-  boolean existsById(Long id);
-
-  boolean existsByName(String name);
 }

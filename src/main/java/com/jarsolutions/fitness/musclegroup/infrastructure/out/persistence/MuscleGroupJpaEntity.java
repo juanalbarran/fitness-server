@@ -29,7 +29,6 @@ public class MuscleGroupJpaEntity extends BaseJpaEntity<Long> {
   public MuscleGroupJpaEntity(Long id, String name) {
     this.id = id;
     this.name = name;
-    this.muscles = List.of();
   }
 
   @Override
@@ -41,23 +40,11 @@ public class MuscleGroupJpaEntity extends BaseJpaEntity<Long> {
     return id;
   }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
-
   public String getName() {
     return name;
   }
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
   public List<MuscleJpaEntity> getMuscles() {
     return muscles;
-  }
-
-  public void setMuscles(List<MuscleJpaEntity> muscles) {
-    this.muscles = muscles;
   }
 }

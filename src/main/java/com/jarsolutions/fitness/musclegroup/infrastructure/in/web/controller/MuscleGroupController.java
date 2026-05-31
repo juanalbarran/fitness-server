@@ -1,6 +1,9 @@
 package com.jarsolutions.fitness.musclegroup.infrastructure.in.web.controller;
 
-import com.jarsolutions.fitness.musclegroup.application.port.in.MuscleGroupUseCases;
+import com.jarsolutions.fitness.musclegroup.application.port.in.CreateMuscleGroupUseCase;
+import com.jarsolutions.fitness.musclegroup.application.port.in.DeleteMuscleGroupUseCase;
+import com.jarsolutions.fitness.musclegroup.application.port.in.GetMuscleGroupUseCase;
+import com.jarsolutions.fitness.musclegroup.application.port.in.UpdateMuscleGroupUseCase;
 import com.jarsolutions.fitness.musclegroup.domain.model.MuscleGroup;
 import com.jarsolutions.fitness.musclegroup.infrastructure.in.web.mapper.MuscleGroupWebMapper;
 import com.jarsolutions.fitness.musclegroup.infrastructure.in.web.request.CreateMuscleGroupRequest;
@@ -17,36 +20,58 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/muscle-group")
+@RequestMapping("/api/v1/muscle-groups")
 public class MuscleGroupController {
-  private final MuscleGroupUseCases useCases;
+  private final CreateMuscleGroupUseCase createUseCase;
+  private final UpdateMuscleGroupUseCase updateUseCase;
+  private final GetMuscleGroupUseCase getUseCase;
+  private final DeleteMuscleGroupUseCase deleteUseCase;
   private final MuscleGroupWebMapper mapper;
 
-  public MuscleGroupController(MuscleGroupUseCases useCases, MuscleGroupWebMapper mapper) {
+  public MuscleGroupController(
+      CreateMuscleGroupUseCase createUseCase,
+      UpdateMuscleGroupUseCase updateUseCase,
+      GetMuscleGroupUseCase getUseCase,
+      DeleteMuscleGroupUseCase deleteUseCase,
+      MuscleGroupWebMapper mapper) {
     this.mapper = mapper;
-    this.useCases = useCases;
+    this.createUseCase = createUseCase;
+    this.updateUseCase = updateUseCase;
+    this.deleteUseCase = deleteUseCase;
+    this.getUseCase = getUseCase;
   }
 
   @PostMapping
   public ResponseEntity<MuscleGroupResponse> create(
       @RequestBody @Valid CreateMuscleGroupRequest request) {
-    MuscleGroup created = useCases.createMuscleGroup(mapper.toCreateMuscleGroupCommand(request));
-    return ResponseEntity.created(URI.create("/api/v1/muscle-group/" + created.getId()))
+    MuscleGroup created =
+        createUseCase.createMuscleGroup(mapper.toCreateMuscleGroupCommand(request));
+    return ResponseEntity.created(URI.create("/api/v1/muscle-groups/" + created.getId()))
         .body(mapper.toMuscleGroupResponse(created));
   }
 
   @GetMapping
-  public ResponseEntity<List<MuscleGroupResponse>> getAllMuscleGroups() {
+  public ResponseEntity<List<MuscleGroupResponse>> getAll(
+      @RequestParam(required = false) String name) {
+    if (name != null) {
+      return ResponseEntity.ok(
+          getUseCase
+              .getMuscleGroupByName(name)
+              .map(mapper::toMuscleGroupResponse)
+              .map(List::of)
+              .orElse(List.of()));
+    }
     return ResponseEntity.ok(
-        useCases.getAllMuscleGroups().stream().map(mapper::toMuscleGroupResponse).toList());
+        getUseCase.getAllMuscleGroups().stream().map(mapper::toMuscleGroupResponse).toList());
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<MuscleGroupResponse> getById(@PathVariable Long id) {
-    return useCases
+    return getUseCase
         .getMuscleGroup(id)
         .map(mapper::toMuscleGroupResponse)
         .map(ResponseEntity::ok)
@@ -57,13 +82,13 @@ public class MuscleGroupController {
   public ResponseEntity<MuscleGroupResponse> update(
       @PathVariable Long id, @RequestBody @Valid UpdateMuscleGroupRequest request) {
     MuscleGroup updated =
-        useCases.updateMuscleGroup(id, mapper.toUpdateMuscleGroupCommand(request));
+        updateUseCase.updateMuscleGroup(id, mapper.toUpdateMuscleGroupCommand(request));
     return ResponseEntity.ok(mapper.toMuscleGroupResponse(updated));
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
-    useCases.deleteMuscleGroup(id);
+    deleteUseCase.deleteMuscleGroup(id);
     return ResponseEntity.noContent().build();
   }
 }

@@ -4,20 +4,19 @@ import com.jarsolutions.fitness.muscle.domain.model.Muscle;
 import java.util.List;
 
 public class MuscleGroup {
-  private Long id;
+  private final Long id;
   private String name;
-  private List<Muscle> muscles;
-
-  public MuscleGroup(String name) {
-    validateName(name);
-    this.name = name;
-    this.muscles = List.of();
-  }
+  private final List<Muscle> muscles;
 
   public MuscleGroup(Long id, String name, List<Muscle> muscles) {
+    validateName(name);
     this.id = id;
     this.name = name;
     this.muscles = muscles;
+  }
+
+  public MuscleGroup(String name) {
+    this(null, name, List.of());
   }
 
   public Long getId() {
