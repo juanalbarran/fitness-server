@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class MuscleGroupService
     implements CreateMuscleGroupUseCase,
         UpdateMuscleGroupUseCase,
@@ -29,14 +29,14 @@ public class MuscleGroupService
   }
 
   @Override
+  @Transactional
   public MuscleGroup createMuscleGroup(CreateMuscleGroupCommand command) {
     String name = command.name();
-    if (repository.findByName(name).isPresent())
-      throw new MuscleGroupAlreadyExistsException("A muscle group already exists with that name.");
-    return repository.save(new MuscleGroup(name));
+    return repository.create(new MuscleGroup(name));
   }
 
   @Override
+  @Transactional
   public MuscleGroup updateMuscleGroup(Long id, UpdateMuscleGroupCommand command) {
     String name = command.name();
     MuscleGroup muscleGroup =
@@ -47,37 +47,33 @@ public class MuscleGroupService
                     new MuscleGroupDoesNotExistException(
                         "A muscle group with that id does not exist."));
     if (name.equals(muscleGroup.getName())) return muscleGroup;
-    if (repository.findByName(name).isPresent())
+    if (repository.existsByName(name))
       throw new MuscleGroupAlreadyExistsException("A muscle group already exists with that name.");
     muscleGroup.rename(name);
-    return repository.save(muscleGroup);
+    return repository.update(muscleGroup);
   }
 
   @Override
+  @Transactional
   public void deleteMuscleGroup(Long id) {
-    repository
-        .findById(id)
-        .orElseThrow(
-            () ->
-                new MuscleGroupDoesNotExistException(
-                    "A muscle group with the id: " + id + " does not exist."));
+    if (!repository.existsById(id)) {
+      throw new MuscleGroupDoesNotExistException(
+          "A muscle group with the id: " + id + " does not exist.");
+    }
     repository.delete(id);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<MuscleGroup> getMuscleGroup(Long id) {
     return repository.findById(id);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<MuscleGroup> getMuscleGroupByName(String name) {
     return repository.findByName(name);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public List<MuscleGroup> getAllMuscleGroups() {
     return repository.findAll();
   }

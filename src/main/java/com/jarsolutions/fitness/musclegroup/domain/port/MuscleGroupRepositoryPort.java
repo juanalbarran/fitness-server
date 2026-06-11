@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MuscleGroupRepositoryPort {
-  MuscleGroup save(MuscleGroup muscleGroup);
-
   Optional<MuscleGroup> findById(Long id);
 
   Optional<MuscleGroup> findByName(String name);
@@ -14,4 +12,12 @@ public interface MuscleGroupRepositoryPort {
   List<MuscleGroup> findAll();
 
   void delete(Long id);
+
+  boolean existsById(Long id);
+
+  boolean existsByName(String name);
+
+  MuscleGroup create(MuscleGroup muscleGroup);
+
+  MuscleGroup update(MuscleGroup muscleGroup);
 }

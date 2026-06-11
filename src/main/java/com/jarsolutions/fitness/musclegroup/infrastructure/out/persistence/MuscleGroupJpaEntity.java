@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,7 +23,7 @@ public class MuscleGroupJpaEntity extends BaseJpaEntity<Long> {
   private String name;
 
   @OneToMany(mappedBy = "muscleGroup")
-  private List<MuscleJpaEntity> muscles;
+  private List<MuscleJpaEntity> muscles = new ArrayList<>();
 
   protected MuscleGroupJpaEntity() {}
 
@@ -46,5 +47,9 @@ public class MuscleGroupJpaEntity extends BaseJpaEntity<Long> {
 
   public List<MuscleJpaEntity> getMuscles() {
     return muscles;
+  }
+
+  public void rename(String name) {
+    this.name = name;
   }
 }

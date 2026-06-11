@@ -1,6 +1,7 @@
 package com.jarsolutions.fitness.musclegroup.infrastructure.out.adapter;
 
 import com.jarsolutions.fitness.musclegroup.domain.exception.MuscleGroupAlreadyExistsException;
+import com.jarsolutions.fitness.musclegroup.domain.exception.MuscleGroupDoesNotExistException;
 import com.jarsolutions.fitness.musclegroup.domain.model.MuscleGroup;
 import com.jarsolutions.fitness.musclegroup.domain.port.MuscleGroupRepositoryPort;
 import com.jarsolutions.fitness.musclegroup.infrastructure.out.mapper.MuscleGroupMapper;
@@ -9,6 +10,7 @@ import com.jarsolutions.fitness.musclegroup.infrastructure.out.persistence.Muscl
 import java.util.List;
 import java.util.Optional;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,14 +25,24 @@ public class MuscleGroupPersistenceAdapter implements MuscleGroupRepositoryPort 
   }
 
   @Override
-  public MuscleGroup save(MuscleGroup muscleGroup) {
+  public MuscleGroup create(MuscleGroup muscleGroup) {
     try {
-      MuscleGroupJpaEntity muscleGroupToSave = mapper.toEntity(muscleGroup);
-      MuscleGroupJpaEntity savedMuscleGroup = jpaRepository.save(muscleGroupToSave);
-
-      return mapper.toDomain(savedMuscleGroup);
+      MuscleGroupJpaEntity entity = mapper.toEntity(muscleGroup);
+      return mapper.toDomain(jpaRepository.save(entity));
     } catch (DataIntegrityViolationException di) {
       throw new MuscleGroupAlreadyExistsException("A muscle group already exists with that name");
+    }
+  }
+
+  @Override
+  public MuscleGroup update(MuscleGroup muscleGroup) {
+    MuscleGroupJpaEntity entity = jpaRepository.getReferenceById(muscleGroup.getId());
+    try {
+      entity.rename(muscleGroup.getName());
+      return mapper.toDomain(jpaRepository.save(entity));
+    } catch (JpaObjectRetrievalFailureException e) {
+      throw new MuscleGroupDoesNotExistException(
+          "There is no muscle group with the id: " + muscleGroup.getId());
     }
   }
 
@@ -52,5 +64,15 @@ public class MuscleGroupPersistenceAdapter implements MuscleGroupRepositoryPort 
   @Override
   public void delete(Long id) {
     jpaRepository.deleteById(id);
+  }
+
+  @Override
+  public boolean existsById(Long id) {
+    return jpaRepository.existsById(id);
+  }
+
+  @Override
+  public boolean existsByName(String name) {
+    return jpaRepository.existsByName(name);
   }
 }
