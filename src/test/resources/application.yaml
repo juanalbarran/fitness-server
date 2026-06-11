@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: fitness-server-test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    username: test
+    password: test
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
