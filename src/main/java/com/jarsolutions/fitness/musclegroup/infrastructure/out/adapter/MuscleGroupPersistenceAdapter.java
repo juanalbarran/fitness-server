@@ -10,7 +10,6 @@ import com.jarsolutions.fitness.musclegroup.infrastructure.out.persistence.Muscl
 import java.util.List;
 import java.util.Optional;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -36,14 +35,11 @@ public class MuscleGroupPersistenceAdapter implements MuscleGroupRepositoryPort 
 
   @Override
   public MuscleGroup update(MuscleGroup muscleGroup) {
-    MuscleGroupJpaEntity entity = jpaRepository.getReferenceById(muscleGroup.getId());
-    try {
-      entity.rename(muscleGroup.getName());
-      return mapper.toDomain(jpaRepository.save(entity));
-    } catch (JpaObjectRetrievalFailureException e) {
-      throw new MuscleGroupDoesNotExistException(
-          "There is no muscle group with the id: " + muscleGroup.getId());
-    }
+    MuscleGroupJpaEntity entity = jpaRepository.findById(muscleGroup.getId())
+        .orElseThrow(() -> new MuscleGroupDoesNotExistException(
+            "There is no muscle group with the id: " + muscleGroup.getId()));
+    entity.rename(muscleGroup.getName());
+    return mapper.toDomain(jpaRepository.save(entity));
   }
 
   @Override
