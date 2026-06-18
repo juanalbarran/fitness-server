@@ -7,4 +7,6 @@ public interface MuscleJpaRepository extends JpaRepository<MuscleJpaEntity, Long
   Optional<MuscleJpaEntity> findByName(String name);
 
   boolean existsByName(String name);
+
+  void deleteByName(String name);
 }

@@ -13,6 +13,7 @@ public class CreateMuscleService implements CreateMuscleUseCase {
     this.repository = repository;
   }
 
+  @Override
   public Muscle create(CreateMuscleCommand command) {
     String muscleName = command.name();
     boolean muscleExists = repository.existsByName(muscleName);

@@ -33,6 +33,12 @@ public class MuscleJpaEntity extends BaseJpaEntity<Long> {
     this.name = name;
   }
 
+  protected MuscleJpaEntity(Long id, String name, MuscleGroupJpaEntity muscleGroup) {
+    this.id = id;
+    this.name = name;
+    this.muscleGroup = muscleGroup;
+  }
+
   @Override
   public String toString() {
     return "Muscle [id: " + id + "; name: " + name + ";]";
@@ -52,5 +58,9 @@ public class MuscleJpaEntity extends BaseJpaEntity<Long> {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public MuscleGroupJpaEntity getMuscleGroup() {
+    return muscleGroup;
   }
 }
